@@ -17,3 +17,4 @@ data Identity a = Identity a
 -- define identity
 instance Eq a => Eq (Identity a) where
     (==) (Identity v) ( Identity v') = v == v'
+

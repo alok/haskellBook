@@ -38,12 +38,3 @@ truth = Papu (Rocks "chomskydoz") (Yeah True)
 
 equalityForall :: Papu -> Papu -> Bool
 equalityForall p p' = p == p'
-
--- Will it typecheck?
-i = 1
-
-f :: Float 
-f = 1.0
-
-g :: (Fractional a) => a
-g =  1.0
