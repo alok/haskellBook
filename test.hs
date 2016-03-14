@@ -1,3 +1,5 @@
+module FunctionWithWhere where printInc n = print plusTwo where plusTwo = n + 2
+
 sayHello:: String -> IO ()
 sayHello x = putStrLn ("hello" ++ ", " ++ x ++ "!")
 
@@ -12,8 +14,3 @@ areaCirc r = pi * r ^ 2
 
 (quot x y) * y + (rem x y) == x
 (div x y) * y + (x `mod` y) == x
-
--- FunctionWithWhere.hs
-module FunctionWithWhere where
-    printInc n = print plusTwo
-        where plusTwo = n + 2

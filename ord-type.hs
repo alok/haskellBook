@@ -12,5 +12,5 @@ instance Ord DayOfWeek where
 
 -- can't use Num bc complex nums are not totally ordered
 -- no type sig needed though because of inference
--- addWeird :: (Real r) => r -> r -> r
+addWeird :: (Real r) => r -> r -> r
 addWeird x y = if x > 1 then x + y else x;
