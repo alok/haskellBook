@@ -16,3 +16,15 @@ eft x y = case compare x y of
 myWords :: String  -> [String]
 myWords []   = []
 myWords xs =  takeWhile (/= ' ') xs : (myWords . drop 1 . dropWhile (/= ' ') $ xs)
+
+mySum :: (Num a) => [a] -> a
+mySum [] = 0
+mySum (x:xs) = x + mySum xs
+
+
+removeArticles :: String -> [String]
+-- removeArticles xs =  filter (/= "the" && /= "a" && /= "an") . myWords $ xs
+removeArticles xs =  neq "the" . neq "a" . neq "an" . myWords $ xs
+            where neq x = filter (/= x)
+
+myZip xs ys = zipWith (\x y -> (x, y)) xs ys
