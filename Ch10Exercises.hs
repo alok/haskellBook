@@ -10,7 +10,7 @@ data DatabaseItem = DbString String
 
   -- TODO can you do something like filterAttribute UTCTime x to get the above function
   -- filterAttribute :: a -> [DatabaseItem] -> [b]
-  -- filterAttribute attrType xs =  foldr (\x acc -> getAttribute x:acc) [] . filter isAttribute $ xs
+  -- filterAttribute attrType xs = foldr (\x acc -> getAttribute x:acc) [] . filter isAttribute $ xs
   --   where isAttribute (attrType x) = True
   --         isAttribute _ = False
   --         getAttribute (attrType x) = x
@@ -26,7 +26,6 @@ theDatabase =
 
 -- TODO figure out whta it means by "a list of the UTCTime values inside them"
 filterDbDate :: [DatabaseItem] -> [UTCTime]
--- filterDbDate xs = foldr (:) [] . filter (\x -> DbDate x == UTCTime _ _) $ xs
 filterDbDate xs = foldr (\x acc -> getUTC x:acc) [] . filter isUTC $ xs
   where isUTC (DbDate _) = True
         isUTC _ = False

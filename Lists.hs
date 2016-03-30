@@ -2,7 +2,7 @@ module Lists where
 
 myTail :: [a] -> Maybe [a]
 myTail []     = Nothing
-myTail [x] = Nothing
+myTail [_] = Nothing
 myTail (_:xs) = Just xs
 
 -- my own version of enumFromTo
@@ -18,13 +18,12 @@ myWords []   = []
 myWords xs =  takeWhile (/= ' ') xs : (myWords . drop 1 . dropWhile (/= ' ') $ xs)
 
 mySum :: (Num a) => [a] -> a
-mySum [] = 0
-mySum (x:xs) = x + mySum xs
-
+mySum = foldr (+) 0
 
 removeArticles :: String -> [String]
 -- removeArticles xs =  filter (/= "the" && /= "a" && /= "an") . myWords $ xs
 removeArticles xs =  neq "the" . neq "a" . neq "an" . myWords $ xs
             where neq x = filter (/= x)
 
-myZip xs ys = zipWith (\x y -> (x, y)) xs ys
+myZip :: [a] -> [b] -> [(a,b)]
+myZip = zipWith (\x y -> (x, y))
