@@ -15,7 +15,11 @@ divBy num denom = if num * denom > 0
                               | abs n < abs d = count
                               | otherwise = go (n - d) d (count + 1)
 
-mc91 :: Integer  -> Integer 
-mc91 n = if n > 100 then n - 10 else mc91 . mc91 $ n + 11
+mc91 :: Integer  -> Integer
+mc91 n = if n > 100
+         then
+         n - 10
+         else
+         (mc91 . mc91) (n + 11)
 
 

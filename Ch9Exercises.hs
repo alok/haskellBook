@@ -14,7 +14,6 @@ myAnd (_:xs) = myAnd xs
 myAny :: (a -> Bool) -> [a] -> Bool
 myAny f xs =  myOr $ map f xs
 
-
 myElem :: (Eq a) => a -> [a] -> Bool
 myElem x =  myAny (== x)
 

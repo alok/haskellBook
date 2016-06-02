@@ -50,8 +50,3 @@ newtype Cows = Cows Int deriving (Eq, Show)
 
 tooManyGoats :: Goats -> Bool
 tooManyGoats (Goats n) =  n > 42
-
-class TooMany a where
-
-instance TooMany Int where
-      tooMany n = n > 42
