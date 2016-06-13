@@ -5,7 +5,7 @@ import           Data.Char     (toLower)
 import           Data.List     (intersperse)
 import           Data.Maybe    (isJust)
 import           System.Exit   (exitSuccess)
--- import           System.Random (randomRIO)
+import           System.Random (randomRIO)
 
 
 type WordList = [String]
@@ -27,25 +27,24 @@ gameWords = do
     where gameLength w = minWordLength < l && l < maxWordLength where l = length w
 
 
--- randomWord :: WordList -> IO String
--- randomWord wl = do
---   randomIndex <- randomRIO (0, length wl - 1)
---   return (wl !! randomIndex)
+randomWord :: WordList -> IO String
+randomWord wl = do
+  randomIndex <- randomRIO (0, length wl - 1)
+  return (wl !! randomIndex)
 
 
--- main :: IO ()
--- main = randomWord gameWords
+main :: IO ()
+main = randomWord gameWords
 
--- randomWord' :: IO String
--- randomWord' = gameWords >>= randomWord
+randomWord' :: IO String
+randomWord' = gameWords >>= randomWord
 
 -- the word, our correct guesses (could be empty -> Nothing), our guesses
 data Puzzle = Puzzle String [Maybe Char] [Char] deriving (Eq)
 
 instance Show Puzzle where
-  -- want something of form with underscores for missing
-  -- letters
-  show (Puzzle _ discovered guessed) = intersperse ' ' ( fmap renderPuzzleChar discovered)
+  show (Puzzle _ discovered guessed) =
+    intersperse ' ' ( fmap renderPuzzleChar discovered)
     ++ " Guessed so far: "
     ++ guessed
 
@@ -73,7 +72,6 @@ fillInChar puzzle@(Puzzle word filledInSoFar guessed) char
     newGuesses = char : guessed
     checkGuesses :: String -> String -> [Maybe Char]
     checkGuesses word guesses = map (\c -> if c `elem` guesses then Just c else Nothing) word
-     (\c -> if c `elem` guesses then Just c else Nothing) map word
 -- fillInChar with Char 'c'
 
 preTestPuzzle = Puzzle "cabc" [Nothing, Just 'a', Nothing, Nothing] "a"
