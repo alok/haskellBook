@@ -1,43 +1,46 @@
--- module Main where
+module Main where
 
-import           Control.Monad (forever)
+import           Control.Monad (forever, when)
 import           Data.Char     (toLower)
-import           Data.List     (intersperse)
+import           Data.List     (intersperse, nub)
 import           Data.Maybe    (isJust)
 import           System.Exit   (exitSuccess)
 import           System.Random (randomRIO)
 
 
-type WordList = [String]
+newtype WordList = WordList [String] deriving (Eq, Show)
 
-minWordLength = 6
-maxWordLength = 9
+minWordLength = 2
+maxWordLength = 2
 
 
 allWords :: IO WordList
 allWords = do
   dict <- readFile "data/dict.txt"
-  return (lines dict)
+  return $ WordList (lines dict)
 
 
 gameWords :: IO WordList
 gameWords = do
-  aw <- allWords
-  return (filter gameLength aw)
-    where gameLength w = minWordLength < l && l < maxWordLength where l = length w
+  (WordList aw) <- allWords
+  return $ WordList (filter gameLength aw)
+    where gameLength w = minWordLength <= l && l <= maxWordLength where l = length (w :: String)
 
 
 randomWord :: WordList -> IO String
-randomWord wl = do
+randomWord (WordList wl) = do
   randomIndex <- randomRIO (0, length wl - 1)
   return (wl !! randomIndex)
 
 
-main :: IO ()
-main = randomWord gameWords
-
 randomWord' :: IO String
 randomWord' = gameWords >>= randomWord
+
+main :: IO ()
+main = do
+  word <- randomWord'
+  let puzzle = freshPuzzle (fmap toLower word)
+   in runGame puzzle
 
 -- the word, our correct guesses (could be empty -> Nothing), our guesses
 data Puzzle = Puzzle String [Maybe Char] [Char] deriving (Eq)
@@ -80,3 +83,49 @@ postTestPuzzle = Puzzle "cabc" [Just 'c', Just 'a', Nothing, Just 'c'] "ca"
 testChar :: Bool
 testChar = fillInChar preTestPuzzle 'c' == postTestPuzzle
 
+handleGuess :: Puzzle -> Char -> IO Puzzle
+handleGuess puzzle guess = do
+  -- wrap guess in list to make it a string
+  putStrLn $ "Your guess was: " ++ show guess ++ [guess]
+  case (charInWord puzzle guess, alreadyGuessed puzzle guess) of
+    (_, True) -> do
+      putStrLn "You already guessed that"
+      return puzzle
+    (True, False) -> do
+      putStrLn "correct"
+      return (fillInChar puzzle guess)
+    (False, False) -> do
+      putStrLn "no. try again"
+      return (fillInChar puzzle guess)
+
+gameOver :: Puzzle -> IO ()
+gameOver (Puzzle wordToGuess filledInSoFar guessed) = if numGuessed - numCorrectGuesses > 7 then
+                                            do
+                                              putStrLn "you lose"
+                                              putStrLn $ "the word was:" ++ wordToGuess
+                                              exitSuccess
+                                            else return ()
+                                              where
+                                                numGuessed = length guessed
+                                                numCorrectGuesses = length correctGuesses
+                                                correctGuesses = filter (/= Nothing) . nub $ filledInSoFar
+
+
+gameWin :: Puzzle -> IO ()
+gameWin (Puzzle _ filledInSoFar _) = if all isJust filledInSoFar then
+                                       do
+                                         putStrLn "you win"
+                                         exitSuccess
+                                       else return ()
+
+
+runGame :: Puzzle -> IO ()
+runGame puzzle = forever $ do
+  gameOver puzzle
+  gameWin puzzle
+  putStrLn $ "current puzzle is:" ++ show puzzle
+  putStrLn "guess a letter"
+  guess <- getLine
+  case guess of
+    [char] -> handleGuess puzzle char >>= runGame
+    _ -> putStrLn "guess must be a single character"
